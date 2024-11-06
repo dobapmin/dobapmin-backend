@@ -6,9 +6,13 @@
 
 feat/#이슈번호-기능요약
 
-예시 : feat/#12-login
+ex) feat/#12-login
 
 ### 2. Commit Message
+
+Feat(#이슈번호): 작업내용
+
+ex) Feat(#12): 로그인 기능 추가
 
 - feat : 새로운 기능 추가
 - fix : 버그 수정, 기능 수정
@@ -21,4 +25,4 @@ feat/#이슈번호-기능요약
 
 ### 3. Pull Request
 
-dev <- feat/#이슈번호-기능요약
+pr feat/#이슈번호-기능요약
