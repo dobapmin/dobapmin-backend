@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const GameBoard = require("../models/GameBoard"); // GameBoard 모델의 경로에 맞게 수정
+const GameBoard = require("../models/GameBoard");
 
 router.post("/", async (req, res) => {
   try {
