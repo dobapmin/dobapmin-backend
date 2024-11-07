@@ -27,7 +27,7 @@ const gameBoardSchema = new mongoose.Schema({
     required: true,
   },
   participate: {
-    type: [String], // 참여자 리스트
+    type: [String],
   },
   isEnd: {
     type: Boolean,
