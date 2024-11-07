@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const GameBoard = require("../models/GameBoard"); // GameBoard 모델의 경로에 맞게 수정
 
-// GameBoard 게시글 추가 API
 router.post("/", async (req, res) => {
   try {
     const { name, title, content, winner, isEnd, totalCount, currentCount, participate } = req.body;
@@ -12,7 +11,7 @@ router.post("/", async (req, res) => {
       title,
       content,
       winner,
-      participate: participate || [], // 기본값으로 빈 배열 설정
+      participate: participate || [],
       isEnd,
       totalCount,
       currentCount,
