@@ -6,6 +6,8 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var user2Router = require("./routes/user2");
+var boardRouter = require("./routes/board");
+var gameBoardRouter = require("./routes/gameBoard");
 var app = express();
 const mongoose = require("./db");
 
@@ -21,6 +23,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/user2", user2Router);
+app.use("/api/board", boardRouter);
+app.use("/api/gameBoard", gameBoardRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
