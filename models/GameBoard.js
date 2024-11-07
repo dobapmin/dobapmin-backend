@@ -18,14 +18,9 @@ const gameBoardSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-<<<<<<< Updated upstream
-  participate: {
-    type: [String], // 참여자 리스트
-=======
   createdAt: {
     type: String,
     default: () => moment().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"),
->>>>>>> Stashed changes
   },
   isEnd: {
     type: Boolean,
