@@ -43,8 +43,8 @@ router.post("/", async (req, res) => {
       title,
       content,
       winner: "-", // 초기값 "-"
-      // participate: [board_id], // 아이디값 프론트에서 넘겨 받으면
-      participate: [],
+      // participate: [req.cookies.name], // 이름 쿠키에서 넘겨 받으면
+      participate: ["임시 이름"],
       isEnd: "false",
       totalCount,
       currentCount: 1,
