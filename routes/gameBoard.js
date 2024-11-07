@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
       winner: "-", // 초기값 "-"
       // participate: [req.cookies.name], // 이름 쿠키에서 넘겨 받으면
       participate: ["임시 이름"],
-      isEnd: "false",
+      isEnd: false,
       totalCount,
       currentCount: 1,
     });
