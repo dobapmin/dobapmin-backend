@@ -5,18 +5,26 @@ const Board = require("../models/Board");
 // 게시글 추가 API
 router.post("/", async (req, res) => {
   try {
-    const { name, title, content, category, isAnonymous, totalCount } =
-      req.body;
+    const userName = req.cookies["dobapmin-Token"];
+    const name = userName || "쿠유없";
+
+    const {
+      title,
+      content,
+      category,
+      isAnonymous,
+      totalCount,
+    } = req.body;
+
 
     const newPost = new Board({
-      // name: req.cookies.name, // 이름 쿠키에서 받으면
       name,
       title,
       content,
       category,
       isAnonymous,
       isEnd: false,
-      participate: [name], // 쿠키에서 이름을 가져오고, 없으면 "임시 이름" 사용
+      participate: [userName],
       totalCount,
       currentCount: 1,
     });

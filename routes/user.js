@@ -24,9 +24,9 @@ router.post("/login", async function (req, res, next) {
     const user = await User.login(nickname);
 
     const tokenMaxAge = 60 * 60 * 24 * 3;
-    const token = user.name + user.nickname;
+    const token = user.name;
     console.log("token", token);
-    user.token = token;
+    // user.token = token;
     res.cookie("dobapmin-Token", token, {
       httpOnly: true,
       maxAge: tokenMaxAge * 1000,
