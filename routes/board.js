@@ -5,16 +5,18 @@ const Board = require("../models/Board");
 // 게시글 추가 API
 router.post("/", async (req, res) => {
   try {
-    const { title, content, category, isAnonymous, totalCount } = req.body;
+    const { name, title, content, category, isAnonymous, totalCount } =
+      req.body;
 
     const newPost = new Board({
-      name: req.cookies.name || "임시 이름", // 쿠키에서 이름을 가져오고, 없으면 "임시 이름" 사용
+      // name: req.cookies.name, // 이름 쿠키에서 받으면
+      name,
       title,
       content,
       category,
       isAnonymous,
       isEnd: false,
-      participate: [req.cookies.name || "임시 이름"], // 쿠키에서 이름을 가져오고, 없으면 "임시 이름" 사용
+      participate: [name], // 쿠키에서 이름을 가져오고, 없으면 "임시 이름" 사용
       totalCount,
       currentCount: 1,
     });
@@ -44,14 +46,15 @@ router.get("/:id", async (req, res) => {
 
 // 밥 참여하기 API
 router.post("/party/:boardId", async (req, res) => {
-  console.log('party req', req.body)
+  console.log("party req", req.body);
   try {
     const { boardId } = req.params;
-    const userName = req.body;
+    const userName = req.body.name;
     console.log(req.body);
     const board = await Board.findById(boardId);
 
-    if (!board) return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+    if (!board)
+      return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
 
     // 이미 마감된 게시글인지 확인
     if (board.isEnd) {
@@ -59,7 +62,9 @@ router.post("/party/:boardId", async (req, res) => {
     }
 
     // 현재 사용자가 이미 참여한 사용자인지 확인
-    const isAlreadyParticipated = board.participate.some((participant) => participant === userName);
+    const isAlreadyParticipated = board.participate.some(
+      (participant) => participant === userName
+    );
     if (isAlreadyParticipated) {
       return res.status(400).json({ message: "이미 참여한 사용자입니다." });
     }
@@ -87,7 +92,8 @@ router.delete("/party/:boardId", async (req, res) => {
     const userName = req.body.name; // 참여자의 이름을 요청 본문에서 가져오기
     const board = await Board.findById(boardId);
 
-    if (!board) return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+    if (!board)
+      return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
 
     // 참여자 목록에 사용자가 포함되어 있는지 확인
     const isParticipant = board.participate.includes(userName);
@@ -96,7 +102,9 @@ router.delete("/party/:boardId", async (req, res) => {
     }
 
     // 참여 취소 처리
-    board.participate = board.participate.filter((participant) => participant !== userName);
+    board.participate = board.participate.filter(
+      (participant) => participant !== userName
+    );
     board.currentCount -= 1;
     board.isEnd = false; // 마감 상태 해제
 

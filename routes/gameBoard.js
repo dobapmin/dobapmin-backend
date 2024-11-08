@@ -27,7 +27,6 @@
 
 // module.exports = router;
 
-
 const express = require("express");
 const router = express.Router();
 const GameBoard = require("../models/GameBoard");
@@ -35,23 +34,23 @@ const GameBoard = require("../models/GameBoard");
 // 게임 게시글 추가 API
 router.post("/", async (req, res) => {
   try {
-    const { title, content, totalCount } = req.body;
+    const { name, title, content, totalCount } = req.body;
 
     const newGamePost = new GameBoard({
       // name: req.cookies.name, // 이름 쿠키에서 받으면
-      name: "임시 이름",
+      name,
       title,
       content,
       winner: "",
       // participate: [req.cookies.name], // 이름 쿠키에서 넘겨 받으면
-      participate: ["임시 이름"],
+      participate: [name],
       isEnd: false,
       totalCount,
       currentCount: 1,
     });
 
     const savedGamePost = await newGamePost.save();
-    res.status(201).json(savedGamePost); 
+    res.status(201).json(savedGamePost);
   } catch (error) {
     res.status(500).json({ message: "게시글 저장 실패", error });
   }
@@ -64,7 +63,9 @@ router.get("/:id", async (req, res) => {
     const gameBoard = await GameBoard.findById(id);
 
     if (!gameBoard) {
-      return res.status(404).json({ message: "게임 게시글을 찾을 수 없습니다." });
+      return res
+        .status(404)
+        .json({ message: "게임 게시글을 찾을 수 없습니다." });
     }
 
     res.status(200).json(gameBoard);
@@ -75,16 +76,18 @@ router.get("/:id", async (req, res) => {
 
 // 내기 참여하기 API
 router.post("/party/:gameBoardId", async (req, res) => {
+  const userName = req.body.name;
   try {
     const { gameBoardId } = req.params;
     const gameBoard = await GameBoard.findById(gameBoardId);
 
-    if (!gameBoard) return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+    if (!gameBoard)
+      return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
 
     if (gameBoard.currentCount >= gameBoard.totalCount) {
       return res.status(400).json({ message: "참여가 마감되었습니다." });
     }
-
+    gameBoard.participate.push(userName);
     gameBoard.currentCount += 1;
     if (gameBoard.currentCount === gameBoard.totalCount) {
       gameBoard.isEnd = true;
@@ -103,7 +106,8 @@ router.delete("/party/:gameBoardId", async (req, res) => {
     const { gameBoardId } = req.params;
     const gameBoard = await GameBoard.findById(gameBoardId);
 
-    if (!gameBoard) return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+    if (!gameBoard)
+      return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
 
     if (gameBoard.currentCount > 0) {
       gameBoard.currentCount -= 1;
@@ -125,7 +129,9 @@ router.post("/select/:gameBoardId", async (req, res) => {
     const gameBoard = await GameBoard.findById(gameBoardId);
 
     if (!gameBoard) {
-      return res.status(404).json({ message: "게임 게시글을 찾을 수 없습니다." });
+      return res
+        .status(404)
+        .json({ message: "게임 게시글을 찾을 수 없습니다." });
     }
 
     // 이미 종료된 경우
@@ -139,7 +145,9 @@ router.post("/select/:gameBoardId", async (req, res) => {
     }
 
     // 랜덤으로 참여자 중에서 winner 선정
-    const randomIndex = Math.floor(Math.random() * gameBoard.participate.length);
+    const randomIndex = Math.floor(
+      Math.random() * gameBoard.participate.length
+    );
     gameBoard.winner = gameBoard.participate[randomIndex];
     gameBoard.isEnd = true; // 마감 상태로 변경
 
@@ -151,4 +159,3 @@ router.post("/select/:gameBoardId", async (req, res) => {
 });
 
 module.exports = router;
-  
