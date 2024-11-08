@@ -35,16 +35,17 @@ const GameBoard = require("../models/GameBoard"); // GameBoard 모델의 경로�
 // GameBoard 게시글 추가 API
 router.post("/", async (req, res) => {
   try {
+    const userName = req.cookies["dobapmin-Token"];
+    const name = userName || "쿠유없";
+
     const { title, content, totalCount } = req.body;
 
     const newGamePost = new GameBoard({
-      // name: req.cookies.name, // 이름 쿠키에서 받으면
-      name: "임시 이름",
+      name,
       title,
       content,
       winner: "",
-      // participate: [req.cookies.name], // 이름 쿠키에서 넘겨 받으면
-      participate: ["임시 이름"],
+      participate: [name],
       isEnd: false,
       totalCount,
       currentCount: 1,
