@@ -6,27 +6,25 @@ const Board = require('../models/Board');
 router.post('/', async (req, res) => {
   try {
     const {
-      name,
       title,
       content,
       category,
       isAnonymous,
-      isEnd,
-      participate,
       totalCount,
-      currentCount,
     } = req.body;
 
     const newPost = new Board({
-      name,
+      // name: req.cookies.name, // 이름 쿠키에서 받으면
+      name: "임시 이름",
       title,
       content,
       category,
       isAnonymous,
-      isEnd,
-      participate: participate || [],
+      isEnd: false,
+      // participate: [req.cookies.name],
+      participate: ["임시 이름"],
       totalCount,
-      currentCount,
+      currentCount: 1,
     });
 
     const savedPost = await newPost.save();

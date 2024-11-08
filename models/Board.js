@@ -16,7 +16,7 @@ const boardSchema = new mongoose.Schema({
   },
   createdAt: {
     type: String,
-    default: () => moment().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"),
+    default: () => moment().tz("Asia/Seoul").format("YYYY.MM.DD"),
   },
   category: {
     type: String,
@@ -45,7 +45,7 @@ const boardSchema = new mongoose.Schema({
 
 // 새 문서가 저장될 때 자동으로 createdAt을 한국 시간으로 포맷하여 저장
 boardSchema.pre("save", function (next) {
-  this.createdAt = moment().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss");
+  this.createdAt = moment().tz("Asia/Seoul").format("YYYY.MM.DD");
   next();
 });
 
