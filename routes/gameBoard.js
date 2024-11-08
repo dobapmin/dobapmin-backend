@@ -86,4 +86,37 @@ router.delete("/party/:gameBoardId", async (req, res) => {
   }
 });
 
+// 뽑기 시작 API
+router.post("/select/:gameBoardId", async (req, res) => {
+  try {
+    const { gameBoardId } = req.params;
+    const gameBoard = await GameBoard.findById(gameBoardId);
+
+    if (!gameBoard) {
+      return res.status(404).json({ message: "게임 게시글을 찾을 수 없습니다." });
+    }
+
+    // 이미 종료된 경우
+    if (gameBoard.isEnd) {
+      return res.status(400).json({ message: "이미 마감된 게시글입니다." });
+    }
+
+    // 참여자 배열이 비어 있는 경우
+    if (gameBoard.participate.length === 0) {
+      return res.status(400).json({ message: "참여자가 없습니다." });
+    }
+
+    // 랜덤으로 참여자 중에서 winner 선정
+    const randomIndex = Math.floor(Math.random() * gameBoard.participate.length);
+    gameBoard.winner = gameBoard.participate[randomIndex];
+    gameBoard.isEnd = true; // 마감 상태로 변경
+
+    await gameBoard.save();
+    res.status(200).json({ message: "뽑기가 완료되었습니다.", gameBoard });
+  } catch (error) {
+    res.status(500).json({ message: "뽑기 처리 중 오류 발생", error });
+  }
+});
+
 module.exports = router;
+  
