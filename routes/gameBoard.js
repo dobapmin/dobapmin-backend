@@ -91,9 +91,9 @@ router.post("/party/:gameBoardId", async (req, res) => {
     gameBoard.participate.push(userName);
     gameBoard.currentCount += 1;
     // 참여자가 다 찼다고 gameBoard.isEnd를 true로 주면 뽑기 화면이 출력돼버림
-    // if (gameBoard.currentCount === gameBoard.totalCount) {
-    //   gameBoard.isEnd = true;
-    // }
+    if (gameBoard.currentCount === gameBoard.totalCount) {
+      gameBoard.isEnd = true;
+    }
 
     await gameBoard.save();
     res.status(200).json({ message: "참여가 완료되었습니다.", gameBoard });
@@ -180,9 +180,9 @@ router.post("/select/:gameBoardId", async (req, res) => {
     }
 
     // 이미 종료된 경우
-    if (gameBoard.isEnd) {
-      return res.status(400).json({ message: "이미 마감된 게시글입니다." });
-    }
+    // if (gameBoard.isEnd) {
+    //   return res.status(400).json({ message: "이미 마감된 게시글입니다." });
+    // }
 
     // 참여자 배열이 비어 있는 경우
     if (gameBoard.participate.length === 0) {
