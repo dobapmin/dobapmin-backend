@@ -91,9 +91,9 @@ router.post("/party/:gameBoardId", async (req, res) => {
     gameBoard.participate.push(userName);
     gameBoard.currentCount += 1;
     // 참여자가 다 찼다고 gameBoard.isEnd를 true로 주면 뽑기 화면이 출력돼버림
-    if (gameBoard.currentCount === gameBoard.totalCount) {
-      gameBoard.isEnd = true;
-    }
+    // if (gameBoard.currentCount === gameBoard.totalCount) {
+    //   gameBoard.isEnd = true;
+    // }
 
     await gameBoard.save();
     res.status(200).json({ message: "참여가 완료되었습니다.", gameBoard });
@@ -171,6 +171,7 @@ router.delete("/party/:gameBoardId", async (req, res) => {
 router.post("/select/:gameBoardId", async (req, res) => {
   try {
     const { gameBoardId } = req.params;
+    const userName = req.body.name; 
     const gameBoard = await GameBoard.findById(gameBoardId);
 
     if (!gameBoard) {
@@ -179,10 +180,15 @@ router.post("/select/:gameBoardId", async (req, res) => {
         .json({ message: "게임 게시글을 찾을 수 없습니다." });
     }
 
+    // 요청을 보낸 사용자가 게시글 작성자인지 확인
+    if (gameBoard.name !== userName) { 
+      return res.status(403).json({ message: "작성자만 뽑기를 시작할 수 있습니다." });
+    }
+
     // 이미 종료된 경우
-    // if (gameBoard.isEnd) {
-    //   return res.status(400).json({ message: "이미 마감된 게시글입니다." });
-    // }
+    if (gameBoard.isEnd) {
+      return res.status(400).json({ message: "이미 마감된 게시글입니다." });
+    }
 
     // 참여자 배열이 비어 있는 경우
     if (gameBoard.participate.length === 0) {
@@ -202,5 +208,6 @@ router.post("/select/:gameBoardId", async (req, res) => {
     res.status(500).json({ message: "뽑기 처리 중 오류 발생", error });
   }
 });
+
 
 module.exports = router;
