@@ -5,17 +5,18 @@ const moment = require('moment-timezone');
 
 // 매일 UTC 기준 오전 2시 30분에 실행하여 서울 시간 오전 11시 30분에 작업하도록 설정
 cron.schedule('30 2 * * *', async () => {
+// cron.schedule('* * * * *', async () => {  
   const currentSeoulTime = moment().tz('Asia/Seoul').format('HH:mm');
   const seoulDate = moment().tz('Asia/Seoul').format('YYYY.MM.DD');
 
-  // isAnonymous 필드를 true로 변경하는 작업
+  // isAnonymous 필드를 false로 변경하는 작업
   if (currentSeoulTime === '11:30') {
     try {
       const result = await Board.updateMany(
-        { isAnonymous: false },
-        { $set: { isAnonymous: true } }
+        { isAnonymous: true },
+        { $set: { isAnonymous: false } }
       );
-      console.log(`${result.modifiedCount}개의 게시글의 isAnonymous 필드가 true로 변경되었습니다.`);
+      console.log(`${result.modifiedCount}개의 게시글의 isAnonymous 필드가 false로 변경되었습니다.`);
     } catch (error) {
       console.error('게시글 업데이트 중 오류 발생:', error);
     }
