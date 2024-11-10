@@ -14,6 +14,8 @@ var app = express();
 const mongoose = require("./db");
 const cors = require("cors");
 
+require("./utils/scheduler");
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "<my-secret>",
