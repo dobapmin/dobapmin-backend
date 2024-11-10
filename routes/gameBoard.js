@@ -90,9 +90,10 @@ router.post("/party/:gameBoardId", async (req, res) => {
     }
     gameBoard.participate.push(userName);
     gameBoard.currentCount += 1;
-    if (gameBoard.currentCount === gameBoard.totalCount) {
-      gameBoard.isEnd = true;
-    }
+    // 참여자가 다 찼다고 gameBoard.isEnd를 true로 주면 뽑기 화면이 출력돼버림
+    // if (gameBoard.currentCount === gameBoard.totalCount) {
+    //   gameBoard.isEnd = true;
+    // }
 
     await gameBoard.save();
     res.status(200).json({ message: "참여가 완료되었습니다.", gameBoard });
@@ -101,26 +102,69 @@ router.post("/party/:gameBoardId", async (req, res) => {
   }
 });
 
+// // 내기 참여취소 API
+// router.delete("/party/:gameBoardId", async (req, res) => {
+//   try {
+//     const { gameBoardId } = req.params;
+//     const gameBoard = await GameBoard.findById(gameBoardId);
+
+//     if (!gameBoard)
+//       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+
+//     if (gameBoard.currentCount > 0) {
+//       gameBoard.currentCount -= 1;
+//       gameBoard.isEnd = false;
+//       await gameBoard.save();
+//       res.status(200).json({ message: "참여가 취소되었습니다.", gameBoard });
+//     } else {
+//       res.status(400).json({ message: "참여자가 없습니다." });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: "참여 취소 처리 중 오류 발생", error });
+//   }
+// });
+
 // 내기 참여취소 API
 router.delete("/party/:gameBoardId", async (req, res) => {
   try {
     const { gameBoardId } = req.params;
+    const userName = req.body.name; // 참여자의 이름을 요청 본문에서 가져오기
+    console.log(req.body);
     const gameBoard = await GameBoard.findById(gameBoardId);
 
     if (!gameBoard)
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
 
-    if (gameBoard.currentCount > 0) {
-      gameBoard.currentCount -= 1;
-      gameBoard.isEnd = false;
-      await gameBoard.save();
-      res.status(200).json({ message: "참여가 취소되었습니다.", gameBoard });
-    } else {
-      res.status(400).json({ message: "참여자가 없습니다." });
+    // 참여자 목록에 사용자가 포함되어 있는지 확인
+    const isParticipant = gameBoard.participate.includes(userName);
+    if (!isParticipant) {
+      return res.status(400).json({ message: "참여하지 않은 사용자입니다." });
     }
+
+    // 참여 취소 처리
+    gameBoard.participate = gameBoard.participate.filter(
+      (participant) => participant !== userName
+    );
+    gameBoard.currentCount -= 1;
+    gameBoard.isEnd = false; // 마감 상태 해제
+
+    await gameBoard.save();
+    res.status(200).json({ message: "참여가 취소되었습니다.", gameBoard });
   } catch (error) {
     res.status(500).json({ message: "참여 취소 처리 중 오류 발생", error });
   }
+
+  //   if (gameBoard.currentCount > 0) {
+  //     gameBoard.currentCount -= 1;
+  //     gameBoard.isEnd = false;
+  //     await gameBoard.save();
+  //     res.status(200).json({ message: "참여가 취소되었습니다.", gameBoard });
+  //   } else {
+  //     res.status(400).json({ message: "참여자가 없습니다." });
+  //   }
+  // } catch (error) {
+  //   res.status(500).json({ message: "참여 취소 처리 중 오류 발생", error });
+  // }
 });
 
 // 뽑기 시작 API
